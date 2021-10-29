@@ -1,0 +1,40 @@
+
+language: python #指定使用的语言
+
+python:
+  - 3.6 #匹配版本，最新版使用参数stable
+
+# 指定缓存模块，可选。缓存可加快编译速度。
+cache:
+  directories:
+    - gallery
+
+before_script:
+  - export TZ='Asia/Shanghai' # 更改时区
+  - echo -e "Host heroku.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config  # 跳过ssh认证
+  - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - echo -e "Host gitee.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
+# Start: Build Lifecycle
+install:
+
+# 执行脚本
+script:
+  - python3 bingying/down_biying.py
+
+# 指定博客分支
+branches:
+  only:
+    - master #触发持续集成的分支
+
+# 设置git提交名，邮箱；替换真实token到_config.yml文件，最后depoy部署
+after_script:
+  - cd ./bingying/
+  - git init
+  - git config user.name "JimyFengqi"
+  - git config user.email "jmps515@163.com"
+  - git config --list
+  - git add .
+  - git commit -m "Auto update docs by Travis CI"
+  - git push --force --quiet "https://${GH_TOKEN}@${GITHUB_REF}" master:master
+  - git push --force --quiet "https://{$GH_USER}:{GIEE_PASSWORD}@{$GITEE_REF}" master:master
