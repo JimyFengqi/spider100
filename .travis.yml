@@ -6,6 +6,7 @@ python:
 # 指定缓存模块，可选。缓存可加快编译速度。
 cache:
   directories:
+    - .deploy_git
     - gallery
 
 before_script:
@@ -21,6 +22,7 @@ install:
 # 执行脚本
 script:
   - python biying/down_bing.py
+  - ls
 
 # 指定博客分支
 branches:
@@ -29,14 +31,17 @@ branches:
 
 # 设置git提交名，邮箱；替换真实token到_config.yml文件，最后depoy部署
 after_script:
-  - cd ./bingying/
-  - git clone --bare https://${GITHUB_REF}
+  - git clone -b master https://${GITHUB_REF} .deploy_git
+  - cd .deploy_git/
+  - cp -r ../gallery/  ./
+  - git log -3
   - git config user.name "JimyFengqi"
   - git config user.email "jmps515@163.com"
   - git config --list
   - git add .
   - git status
-  - git commit -m "Auto update docs by Travis CI"
+  - git commit -m "Auto update bing picture by Travis CI"
   - git log -1 --stat
+  - git branch
   - git push --force --quiet "https://${GH_TOKEN}@${GITHUB_REF}" master:master
-  - git push --force --quiet "https://${GH_USER}:${GIEE_PASSWORD}@{$GITEE_REF}" master:master
+  - git push --force --quiet "https://${GH_USER}:${GIEE_PASSWORD}@${GITEE_REF}" master:master
