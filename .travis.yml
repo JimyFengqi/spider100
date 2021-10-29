@@ -22,7 +22,7 @@ install:
 # 执行脚本
 script:
   - python biying/down_bing.py
-  - ls
+  - ls -l
 
 # 指定博客分支
 branches:
